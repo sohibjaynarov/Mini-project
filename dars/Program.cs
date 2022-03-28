@@ -1,76 +1,45 @@
 ﻿using dars.IRepositories;
 using dars.Models;
 using dars.Repositories;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace dars
 {
     internal class Program
     {
+
         static void Main(string[] args)
         {
-            //IUserRepository userRepository = new UserRepository();
+            IUserRepository repo = new UserRepository();
 
-            ///*
-            //1. Create
-            //2. Get
-            //3. GetAll
-            //4. Delete
-            //5. Update
-            // */
+            User user = new User()
+            {
+                FirstName = "Sohib",
+                LastName = "Jaynarov"
+            };
 
 
-            //User user = new User()
-            //{
-            //    FirstName = "Sohib",
-            //    LastName = "Jaynarov",
-            //    Age = 19,
-            //    Email = "sokhibjaynarov@gmail.com"
-            //};
+            //repo.Create(user);
 
-            //User user1 = new User()
-            //{
-            //    FirstName = "Akbar",
-            //    LastName = "Ergashev",
-            //    Age = 9,
-            //    Email = "akbar@gmail.com"
-            //};
+            //repo.Delete(0);
 
-            //User user2 = new User()
-            //{
-            //    FirstName = "Sardor",
-            //    LastName = "Ergashev",
-            //    Age = 39,
-            //    Email = "sardor@gmail.com"
-            //};
+            //User user1 = repo.Get(10);
 
+            //if(user1 != null)
+            //    Console.WriteLine(user1.FirstName + " " + user1.LastName);
+            //else
+            //    Console.WriteLine("Bunday foydalanuvchi mavjud emas!");
 
-            //userRepository.Create(user);
-            //userRepository.Create(user1);
+            //List<User> users = repo.GetAll();
 
-            //List<User> users = userRepository.GetAll();
+            //foreach(User user1 in users)
+            //    Console.WriteLine(user1.FirstName + " " + user1.LastName);
 
-            //foreach(User myUser in users)
-            //    Console.WriteLine(myUser.Id + " - " + myUser.FirstName + " - " + myUser.LastName + " - " + myUser.Email + " - " + myUser.Age);
+            // repo.Update(user, 0);
 
-            //Console.WriteLine();
-
-            //User userr = userRepository.Get(2);
-            //Console.WriteLine(userr.Id + " - " + userr.FirstName + " - " + userr.LastName + " - " + userr.Email + " - " + userr.Age);
-
-            //userRepository.Update(user2, 2);
-
-            //Console.WriteLine();
-
-            //foreach (User myUser in users)
-            //    Console.WriteLine(myUser.Id + " - " + myUser.FirstName + " - " + myUser.LastName + " - " + myUser.Email + " - " + myUser.Age);
 
 
         }
-
     }
-
 }
+
 

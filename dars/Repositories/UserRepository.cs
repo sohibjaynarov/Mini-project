@@ -1,58 +1,95 @@
 ﻿using dars.IRepositories;
 using dars.Models;
+using dars.Service;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace dars.Repositories
 {
     internal class UserRepository : IUserRepository
     {
-        List<User> users = new List<User>();
-
         public User Create(User user)
         {
-            user.Id =  users.Count + 1;
-            users.Add(user);
+            string path = Helpers.Path(user.Id);
+            string data = user.ToString();
+            File.WriteAllText(path, data);
+
             return user;
         }
 
-        public bool Delete(int id)
+        public bool Delete(Guid id)
         {
-            User myUser = users.Find(p => p.Id == id);
-            if (myUser == null)
-                return false;
+            bool result = false;
+            string[] files = Directory.GetFiles(Constants.Path);
+            foreach (string file in files)
+            {
+                string[] data = File.ReadAllText(file).Split();
 
-            users.Remove(myUser);
-            return true;
+                if (id == Guid.Parse(data[0]))
+                {
+                    File.Delete(file);
+                    result = true;
+                }
+            }
 
+            return result;
         }
 
-        public User Get(int id)
+        public User Get(Guid id)
         {
-            return users.Find(p => p.Id == id);
+            User user = null;
+            string[] files = Directory.GetFiles(Constants.Path);
+            foreach (string file in files)
+            {
+                string[] data = File.ReadAllText(file).Split();
+
+                if (id == Guid.Parse(data[0]))
+                {
+                    user = new User()
+                    {
+                        Id = Guid.Parse(data[0]),
+                        FirstName = data[1],
+                        LastName = data[2],
+                    };
+                }
+            }
+
+            return user;
         }
 
         public List<User> GetAll()
         {
+            List<User> users = new List<User>();
+            string[] files = Directory.GetFiles(Constants.Path);
+            foreach (string file in files)
+            {
+                string[] data = File.ReadAllText(file).Split();
+                users.Add(new User()
+                {
+                    Id = Guid.Parse(data[0]),
+                    FirstName = data[1],
+                    LastName = data[2],
+                });
+            }
+
             return users;
         }
 
-        public User Update(User user, int id)
+        public User Update(User user, Guid id)
         {
-            User myUser = users.Find(p => p.Id == id);
+            string[] files = Directory.GetFiles(Constants.Path);
+            foreach (string file in files)
+            {
+                string[] data = File.ReadAllText(file).Split();
+                if (id == Guid.Parse(data[0]))
+                {
+                    string userData = user.ToString();
+                    File.WriteAllText(file, userData);
+                }
+            }
 
-            if(myUser == null)
-                return null;
-
-            user.Id = id;
-
-            users.Remove(myUser);
-
-            users.Add(user);
-            return myUser;
+            return user;
         }
     }
 }
