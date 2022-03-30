@@ -9,6 +9,23 @@ namespace dars.Repositories
 {
     internal class UserRepository : IUserRepository
     {
+        public bool CheckForExist(string username, string password)
+        {
+            bool result = false;
+            string[] files = Directory.GetFiles(Constants.Path);
+            foreach(string file in files)
+            {
+                string[] data = File.ReadAllLines(file);
+
+                if(username == data[5] && password == data[6])
+                {
+                    result = true;
+                }
+            }
+
+            return result;
+        }
+
         public User Create(User user)
         {
             string path = Helpers.Path(user.Id);
@@ -18,15 +35,15 @@ namespace dars.Repositories
             return user;
         }
 
-        public bool Delete(Guid id)
+        public bool Delete(string username)
         {
             bool result = false;
             string[] files = Directory.GetFiles(Constants.Path);
             foreach (string file in files)
             {
-                string[] data = File.ReadAllText(file).Split();
+                string[] data = File.ReadAllLines(file);
 
-                if (id == Guid.Parse(data[0]))
+                if (username == data[5])
                 {
                     File.Delete(file);
                     result = true;
@@ -36,21 +53,25 @@ namespace dars.Repositories
             return result;
         }
 
-        public User Get(Guid id)
+        public User Get(string username)
         {
             User user = null;
             string[] files = Directory.GetFiles(Constants.Path);
             foreach (string file in files)
             {
-                string[] data = File.ReadAllText(file).Split();
+                string[] data = File.ReadAllLines(file);
 
-                if (id == Guid.Parse(data[0]))
+                if (username == data[5])
                 {
                     user = new User()
                     {
                         Id = Guid.Parse(data[0]),
                         FirstName = data[1],
                         LastName = data[2],
+                        Age = int.Parse(data[3]),
+                        Email = data[4],
+                        Username = data[5],
+                        Password = data[6]
                     };
                 }
             }
@@ -64,26 +85,31 @@ namespace dars.Repositories
             string[] files = Directory.GetFiles(Constants.Path);
             foreach (string file in files)
             {
-                string[] data = File.ReadAllText(file).Split();
+                string[] data = File.ReadAllLines(file);
                 users.Add(new User()
                 {
                     Id = Guid.Parse(data[0]),
                     FirstName = data[1],
                     LastName = data[2],
+                    Age = int.Parse(data[3]),
+                    Email = data[4],
+                    Username = data[5],
+                    Password = data[6]
                 });
             }
 
             return users;
         }
 
-        public User Update(User user, Guid id)
+        public User Update(User user, string username)
         {
             string[] files = Directory.GetFiles(Constants.Path);
             foreach (string file in files)
             {
-                string[] data = File.ReadAllText(file).Split();
-                if (id == Guid.Parse(data[0]))
+                string[] data = File.ReadAllLines(file);
+                if (username == data[5])
                 {
+                    user.Id = Guid.Parse(data[0]);
                     string userData = user.ToString();
                     File.WriteAllText(file, userData);
                 }
