@@ -1,9 +1,10 @@
-﻿using dars.IRepositories;
+﻿using ConsoleTables;
+using dars.IRepositories;
 using dars.Models;
 using dars.Repositories;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using ConsoleTables;
 
 namespace dars
 {
@@ -13,8 +14,8 @@ namespace dars
         static void Main(string[] args)
         {
             IUserRepository repo = new UserRepository();
-
-            while(true)
+            
+            while (true)
             {
                 Console.WriteLine("1. Sign in\n" +
                                     "2. Sign up\n" +
@@ -23,7 +24,7 @@ namespace dars
                 Console.Write(">");
                 int input = int.Parse(Console.ReadLine());
 
-                if(input == 1)
+                if (input == 1)
                 {
                     Console.Write("Input your username: ");
                     string username = Console.ReadLine();
@@ -32,7 +33,7 @@ namespace dars
 
                     bool check = repo.CheckForExist(username, password);
 
-                    if(check)
+                    if (check)
                     {
                         while (true)
                         {
@@ -104,7 +105,7 @@ namespace dars
 
                                 if (checkUser)
                                 {
-                                    repo.Delete(username);
+                                    repo.Delete(pword);
                                 }
                                 else
                                 {
@@ -149,7 +150,7 @@ namespace dars
 
                     User myUser = repo.Create(user);
 
-                    if(myUser == null)
+                    if (myUser == null)
                     {
                         Console.WriteLine("Not registred!");
                     }
@@ -225,7 +226,7 @@ namespace dars
 
                                 if (checkUser)
                                 {
-                                    repo.Delete(username);
+                                    repo.Delete(pword);
                                 }
                                 else
                                 {
@@ -240,13 +241,7 @@ namespace dars
                     }
                 }
 
-                }
             }
-
-
-
         }
     }
-
-
-
+}

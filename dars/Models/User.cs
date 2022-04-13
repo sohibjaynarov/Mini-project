@@ -11,10 +11,5 @@ namespace dars.Models
         public string Email { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
-
-        public override string ToString()
-        {
-            return Id + "\n" + FirstName + "\n" + LastName + "\n" + Age + "\n" + Email + "\n" + Username + "\n" + Password;
-        }
     }
 }

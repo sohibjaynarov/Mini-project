@@ -1,6 +1,7 @@
 ﻿using dars.IRepositories;
 using dars.Models;
 using dars.Service;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,12 +13,14 @@ namespace dars.Repositories
         public bool CheckForExist(string username, string password)
         {
             bool result = false;
-            string[] files = Directory.GetFiles(Constants.Path);
-            foreach(string file in files)
-            {
-                string[] data = File.ReadAllLines(file);
+            string data = File.ReadAllText(Constants.Path);
 
-                if(username == data[5] && password == data[6])
+            List<User> users = JsonConvert.DeserializeObject<List<User>>(data);
+
+            foreach (var user in users)
+            {
+
+                if (username == user.Username && password == user.Password)
                 {
                     result = true;
                 }
@@ -28,92 +31,98 @@ namespace dars.Repositories
 
         public User Create(User user)
         {
-            string path = Helpers.Path(user.Id);
-            string data = user.ToString();
-            File.WriteAllText(path, data);
+            IList<User> users = new List<User>();
+
+            string data = File.ReadAllText(Constants.Path);
+
+            users = JsonConvert.DeserializeObject<IList<User>>(data);
+
+            users.Add(user);
+
+            string json = JsonConvert.SerializeObject(users);
+
+            File.WriteAllText(Constants.Path, json);
 
             return user;
         }
 
-        public bool Delete(string username)
+        public bool Delete(string password)
         {
             bool result = false;
-            string[] files = Directory.GetFiles(Constants.Path);
-            foreach (string file in files)
-            {
-                string[] data = File.ReadAllLines(file);
 
-                if (username == data[5])
+            string data = File.ReadAllText(Constants.Path);
+
+            IList<User> users = new List<User>();
+
+            users = JsonConvert.DeserializeObject<IList<User>>(data);
+
+
+            foreach (var user in users)
+            {
+                if(password == user.Password)
                 {
-                    File.Delete(file);
-                    result = true;
+                    users.Remove(user);
+                    result=true;
+
+                    break;
+                }
+            }
+            string json = JsonConvert.SerializeObject(users);
+
+            File.WriteAllText(Constants.Path, json);
+
+            
+            return result;
+        }
+
+        public User Get(string username)
+        {
+            User result = null;
+
+            string data = File.ReadAllText(Constants.Path);
+
+            IList<User> users = JsonConvert.DeserializeObject<IList<User>>(data);
+
+            foreach (var user in users)
+            {
+
+                if (username == user.Username)
+                {
+                    result = user;
                 }
             }
 
             return result;
         }
 
-        public User Get(string username)
-        {
-            User user = null;
-            string[] files = Directory.GetFiles(Constants.Path);
-            foreach (string file in files)
-            {
-                string[] data = File.ReadAllLines(file);
-
-                if (username == data[5])
-                {
-                    user = new User()
-                    {
-                        Id = Guid.Parse(data[0]),
-                        FirstName = data[1],
-                        LastName = data[2],
-                        Age = int.Parse(data[3]),
-                        Email = data[4],
-                        Username = data[5],
-                        Password = data[6]
-                    };
-                }
-            }
-
-            return user;
-        }
-
         public List<User> GetAll()
         {
-            List<User> users = new List<User>();
-            string[] files = Directory.GetFiles(Constants.Path);
-            foreach (string file in files)
-            {
-                string[] data = File.ReadAllLines(file);
-                users.Add(new User()
-                {
-                    Id = Guid.Parse(data[0]),
-                    FirstName = data[1],
-                    LastName = data[2],
-                    Age = int.Parse(data[3]),
-                    Email = data[4],
-                    Username = data[5],
-                    Password = data[6]
-                });
-            }
+            string data = File.ReadAllText(Constants.Path);
+
+            List<User> users = JsonConvert.DeserializeObject<List<User>>(data);
 
             return users;
         }
 
         public User Update(User user, string username)
         {
-            string[] files = Directory.GetFiles(Constants.Path);
-            foreach (string file in files)
+            string data = File.ReadAllText(Constants.Path);
+
+            IList<User> users = JsonConvert.DeserializeObject<IList<User>>(data);
+
+            foreach (User myUser in users)
             {
-                string[] data = File.ReadAllLines(file);
-                if (username == data[5])
+                if (myUser.Username == username)
                 {
-                    user.Id = Guid.Parse(data[0]);
-                    string userData = user.ToString();
-                    File.WriteAllText(file, userData);
+                    user.Id = myUser.Id;
+                    users.Remove(myUser);
+                    users.Add(user);
+                    break;
                 }
             }
+            string json = JsonConvert.SerializeObject(users);
+
+            File.WriteAllText(Constants.Path, json);
 
             return user;
         }
